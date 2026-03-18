@@ -1,0 +1,30 @@
+---
+# Helm Chart to deploy
+ocp4_workload_hummingbird_repo: https://github.com/redhat-gpte-devopsautomation/agnosticd_workload_helm_charts.git
+# Tag to deploy
+ocp4_workload_hummingbird_repo_tag: main
+ocp4_workload_hummingbird_repo_path: hummingbird
+
+# How many users to set up
+ocp4_workload_hummingbird_num_users: 1
+
+# Namespace base (The user number will be appended to this base)
+ocp4_workload_hummingbird_namespace_base: rhel-
+# Base for multi user setup
+ocp4_workload_hummingbird_user_base: user
+
+# Role to grant users for their namespace
+ocp4_workload_hummingbird_role: admin
+
+# ArgoCD project to deploy the applications into
+ocp4_workload_hummingbird_user_app_project_prefix: appproject-
+
+# Settings for the RHEL VMs
+ocp4_workload_hummingbird_vm_name_base: rhel
+ocp4_workload_hummingbird_vm_datasourcename: rhel10
+ocp4_workload_hummingbird_vm_datasourcenamespace: openshift-virtualization-os-images
+ocp4_workload_hummingbird_vm_user: rhel
+# Set password via config
+ocp4_workload_hummingbird_vm_password: ""
+ocp4_workload_hummingbird_vm_disksize: 30Gi
+ocp4_workload_hummingbird_vm_instancetype: u1.medium

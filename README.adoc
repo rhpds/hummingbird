@@ -1,0 +1,51 @@
+= rhpds.hummingbird
+:toc: macro
+:toc-title: Table of Contents
+:toclevels: 3
+
+An Ansible collection for deploying the Hummingbird workshop and lab environments on Red Hat OpenShift.
+
+toc::[]
+
+== Overview
+
+This collection provides automation for setting up a complete MTA demonstration environment.
+
+The collection uses GitOps (ArgoCD ApplicationSets) to deploy and manage all components.
+
+== Collection Information
+
+[cols="1,2"]
+|===
+|Namespace |`rhpds`
+|Name |`hummingbird`
+|Version |1.0.0
+|License |GPL-2.0-or-later
+|Author |Wolfgang Kulhanek <wkulhane@redhat.com>, Shaaf Syed <sshaaf@redhat.com>
+|===
+
+== Prerequisites
+
+* Red Hat OpenShift 4.x cluster
+* OpenShift GitOps (ArgoCD) installed and configured
+* `kubernetes.core` Ansible collection installed
+* `agnosticd.core` Ansible collection installed
+
+== Installation
+
+Install the collection from Ansible Galaxy:
+
+[source,bash]
+----
+ansible-galaxy collection install rhpds.hummingbird
+----
+
+Or include in your `requirements.yml`:
+
+[source,yaml]
+----
+collections:
+  - name: rhpds.hummingbird
+    version: ">=1.0.0"
+----
+

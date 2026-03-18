@@ -1,0 +1,49 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: hummingbird-vms
+  namespace: openshift-gitops
+spec:
+  generators:
+  - list:
+      elements:
+{% for n in range(1, ocp4_workload_hummingbird_num_users | int + 1 ) %}
+      - user: {{ ocp4_workload_hummingbird_user_base }}{{ n }}
+{% endfor %}
+  template:
+    metadata:
+      name: "{{ ocp4_workload_hummingbird_namespace_base }}-{% raw %}{{ user }}{% endraw %}"
+      namespace: openshift-gitops
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+    spec:
+      destination:
+        name: ''
+        namespace: "{{ ocp4_workload_hummingbird_namespace_base }}-{% raw %}{{ user }}{% endraw %}"
+        server: 'https://kubernetes.default.svc'
+      project: "{{ocp4_workload_hummingbird_user_app_project_prefix}}{% raw %}{{ user }}{% endraw %}"
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+        automated:
+          prune: false
+          selfHeal: false
+      source:
+        repoURL: {{ ocp4_workload_hummingbird_repo }}
+        targetRevision: {{ ocp4_workload_hummingbird_repo_tag }}
+        path: {{ ocp4_workload_hummingbird_repo_path }}
+        helm:
+          values: |
+            fullNameOverride: {{ ocp4_workload_hummingbird_namespace_base }}
+            namespacePermissions:
+              user: "{% raw %}{{ user }}{% endraw %}"
+              role: {{ ocp4_workload_hummingbird_role }}
+            vm:
+              name: "rhel-{% raw %}{{ user }}{% endraw %}"
+              datasourcename: {{ ocp4_workload_hummingbird_vm_datasourcename }}
+              datasourcenamespace: {{ ocp4_workload_hummingbird_vm_datasourcenamespace }}
+              username: {{ ocp4_workload_hummingbird_vm_user }}
+              password: {{ ocp4_workload_hummingbird_vm_password }}
+              disksize: {{ ocp4_workload_hummingbird_vm_disksize }}
+              instancetype: {{ ocp4_workload_hummingbird_vm_instancetype }}

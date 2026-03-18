@@ -1,0 +1,27 @@
+---
+- name: Check Openshift Gitops / ArgoCD installation
+  kubernetes.core.k8s_info:
+    api_version: argoproj.io/v1alpha1
+    kind: ArgoCD
+    name: openshift-gitops
+    namespace: openshift-gitops
+  register: r_argocd
+
+- name: Assert that GitOps is installed
+  ansible.builtin.assert:
+    that: r_argocd.resources | length > 0
+    msg: "Openshift Gitops / ArgoCD is not installed."
+
+- name: Create RHEL VMs
+  kubernetes.core.k8s:
+    state: present
+    template: applicationset.yaml.j2
+
+- name: Save VM user information for each user
+  agnosticd.core.agnosticd_user_info:
+    user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+    data:
+      rhel_vm_name: "{{ ocp4_workload_hummingbird_vm_name_base }}-{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+      rhel_vm_user: "{{ ocp4_workload_hummingbird_vm_user }}"
+      rhel_vm_password: "{{ ocp4_workload_hummingbird_vm_password }}"
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
