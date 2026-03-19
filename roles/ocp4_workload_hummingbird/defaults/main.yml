@@ -16,11 +16,8 @@ ocp4_workload_hummingbird_user_base: user
 # Role to grant users for their namespace
 ocp4_workload_hummingbird_role: admin
 
-# ArgoCD project to deploy the applications into
-ocp4_workload_hummingbird_user_app_project_prefix: appproject-
-
 # Settings for the RHEL VMs
-ocp4_workload_hummingbird_vm_name_base: rhel
+ocp4_workload_hummingbird_vm_name_base: rhel-
 ocp4_workload_hummingbird_vm_datasourcename: hummingbird
 ocp4_workload_hummingbird_vm_datasourcenamespace: openshift-virtualization-os-images
 ocp4_workload_hummingbird_vm_user: rhel
