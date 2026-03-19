@@ -25,3 +25,16 @@ ocp4_workload_hummingbird_vm_user: rhel
 ocp4_workload_hummingbird_vm_password: ""
 ocp4_workload_hummingbird_vm_disksize: 30Gi
 ocp4_workload_hummingbird_vm_instancetype: u1.medium
+
+# Settings for the DataVolume
+ocp4_workload_hummingbird_datavolume_name: hummingbird
+ocp4_workload_hummingbird_datavolume_namespace: openshift-virtualization-os-images
+ocp4_workload_hummingbird_datavolume_source: http://url_to_qcow2_image.qcow2
+ocp4_workload_hummingbird_datavolume_storageClassName: ocs-external-storagecluster-ceph-rbd-immediate
+ocp4_workload_hummingbird_datavolume_disksize: 30Gi
+
+# Settings for the DataSource
+ocp4_workload_hummingbird_datasource_name: hummingbird
+ocp4_workload_hummingbird_datasource_namespace: openshift-virtualization-os-images
+ocp4_workload_hummingbird_datasource_source_name: hummingbird-image
+ocp4_workload_hummingbird_datasource_source_namespace: openshift-virtualization-os-images
