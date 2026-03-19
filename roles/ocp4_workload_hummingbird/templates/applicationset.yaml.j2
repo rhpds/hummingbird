@@ -13,14 +13,14 @@ spec:
 {% endfor %}
   template:
     metadata:
-      name: "{{ ocp4_workload_hummingbird_namespace_base }}-{% raw %}{{ user }}{% endraw %}"
+      name: "{{ ocp4_workload_hummingbird_namespace_base }}{% raw %}{{ user }}{% endraw %}"
       namespace: openshift-gitops
       finalizers:
       - resources-finalizer.argocd.argoproj.io
     spec:
       destination:
         name: ''
-        namespace: "{{ ocp4_workload_hummingbird_namespace_base }}-{% raw %}{{ user }}{% endraw %}"
+        namespace: "{{ ocp4_workload_hummingbird_namespace_base }}{% raw %}{{ user }}{% endraw %}"
         server: 'https://kubernetes.default.svc'
       project: "{{ocp4_workload_hummingbird_user_app_project_prefix}}{% raw %}{{ user }}{% endraw %}"
       syncPolicy:
@@ -35,12 +35,12 @@ spec:
         path: {{ ocp4_workload_hummingbird_repo_path }}
         helm:
           values: |
-            fullNameOverride: {{ ocp4_workload_hummingbird_namespace_base }}
+            fullNameOverride: "{{ ocp4_workload_hummingbird_namespace_base }}{% raw %}{{ user }}{% endraw %}"
             namespacePermissions:
               user: "{% raw %}{{ user }}{% endraw %}"
               role: {{ ocp4_workload_hummingbird_role }}
             vm:
-              name: "rhel-{% raw %}{{ user }}{% endraw %}"
+              name: "{{ ocp4_workload_hummingbird_vm_name_base }}{% raw %}{{ user }}{% endraw %}"
               datasourcename: {{ ocp4_workload_hummingbird_vm_datasourcename }}
               datasourcenamespace: {{ ocp4_workload_hummingbird_vm_datasourcenamespace }}
               username: {{ ocp4_workload_hummingbird_vm_user }}
