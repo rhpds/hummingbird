@@ -16,33 +16,13 @@
     template: namespace_builds.yaml.j2
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
 
-- name: Get Quay OAuth token
-  ansible.builtin.uri:
-    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/oauth/authorizeapp"
-    method: POST
-    url_username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
-    url_password: "{{ ocp4_workload_hummingbird_builds_quay_admin_password }}"
-    force_basic_auth: true
-    body_format: form-urlencoded
-    body:
-      client_id: "{{ ocp4_workload_hummingbird_builds_quay_oauth_client_id }}"
-      redirect_uri: "{{ ocp4_workload_hummingbird_builds_quay_url }}"
-      scope: "super:user"
-    follow_redirects: none
-    status_code: 302
-  register: r_quay_oauth_response
-
-- name: Extract OAuth token from redirect
-  ansible.builtin.set_fact:
-    _ocp4_workload_hummingbird_quay_token: >-
-      {{ r_quay_oauth_response.location | regex_search('access_token=([^&]+)', '\1') | first }}
-
 - name: Create Quay users
   ansible.builtin.uri:
     url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/superuser/users/"
     method: POST
-    headers:
-      Authorization: "Bearer {{ _ocp4_workload_hummingbird_quay_token }}"
+    url_username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
+    url_password: "{{ ocp4_workload_hummingbird_builds_quay_admin_password }}"
+    force_basic_auth: true
     body_format: json
     body:
       username: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
@@ -57,8 +37,9 @@
     url: >-
       {{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/superuser/users/{{ ocp4_workload_hummingbird_user_base }}{{ item }}
     method: PUT
-    headers:
-      Authorization: "Bearer {{ _ocp4_workload_hummingbird_quay_token }}"
+    url_username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
+    url_password: "{{ ocp4_workload_hummingbird_builds_quay_admin_password }}"
+    force_basic_auth: true
     body_format: json
     body:
       password: "{{ ocp4_workload_hummingbird_builds_quay_user_password }}"
