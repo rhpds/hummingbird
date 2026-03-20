@@ -48,4 +48,5 @@ ocp4_workload_hummingbird_builds_namespace_base: hummingbird-builds-
 ocp4_workload_hummingbird_builds_quay_url: https://quay-registry.example.com
 ocp4_workload_hummingbird_builds_quay_admin: quayadmin
 ocp4_workload_hummingbird_builds_quay_admin_password: ""
+ocp4_workload_hummingbird_builds_quay_oauth_client_id: ""
 ocp4_workload_hummingbird_builds_quay_user_password: ""

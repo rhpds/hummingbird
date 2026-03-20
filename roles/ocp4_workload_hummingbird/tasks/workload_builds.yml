@@ -16,21 +16,26 @@
     template: namespace_builds.yaml.j2
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
 
-- name: Get Quay admin API token
+- name: Get Quay OAuth token
   ansible.builtin.uri:
-    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/user/login"
+    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/oauth/authorizeapp"
     method: POST
-    body_format: json
+    url_username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
+    url_password: "{{ ocp4_workload_hummingbird_builds_quay_admin_password }}"
+    force_basic_auth: true
+    body_format: form-urlencoded
     body:
-      username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
-      password: "{{ ocp4_workload_hummingbird_builds_quay_admin_password }}"
-    status_code: 200
-  register: ocp4_workload_hummingbird_r_quay_login
+      client_id: "{{ ocp4_workload_hummingbird_builds_quay_oauth_client_id }}"
+      redirect_uri: "{{ ocp4_workload_hummingbird_builds_quay_url }}"
+      scope: "super:user"
+    follow_redirects: none
+    status_code: 302
+  register: r_quay_oauth_response
 
-- name: Set Quay access token fact
+- name: Extract OAuth token from redirect
   ansible.builtin.set_fact:
     _ocp4_workload_hummingbird_quay_token: >-
-      {{ ocp4_workload_hummingbird_r_quay_login.json.access_token }}
+      {{ r_quay_oauth_response.location | regex_search('access_token=([^&]+)', '\1') | first }}
 
 - name: Create Quay users
   ansible.builtin.uri:
