@@ -16,10 +16,20 @@
     template: namespace_builds.yaml.j2
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
 
+- name: Get initial Quay CSRF token
+  ansible.builtin.uri:
+    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/csrf_token"
+    method: GET
+    status_code: 200
+  register: r_quay_csrf_initial
+
 - name: Sign in to Quay as admin
   ansible.builtin.uri:
     url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/signin"
     method: POST
+    headers:
+      Cookie: "{{ r_quay_csrf_initial.cookies_string }}"
+      X-CSRF-Token: "{{ r_quay_csrf_initial.json.csrf_token }}"
     body_format: json
     body:
       username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
@@ -34,13 +44,13 @@
     headers:
       Cookie: "{{ r_quay_signin.cookies_string }}"
     status_code: 200
-  register: r_quay_csrf
+  register: r_quay_csrf_auth
 
 - name: Debug Quay auth
   ansible.builtin.debug:
     msg:
       session_cookie: "{{ r_quay_signin.cookies_string }}"
-      csrf_token: "{{ r_quay_csrf.json.csrf_token }}"
+      csrf_token: "{{ r_quay_csrf_auth.json.csrf_token }}"
 
 - name: Create Quay users
   ansible.builtin.uri:
@@ -48,7 +58,7 @@
     method: POST
     headers:
       Cookie: "{{ r_quay_signin.cookies_string }}"
-      X-CSRF-Token: "{{ r_quay_csrf.json.csrf_token }}"
+      X-CSRF-Token: "{{ r_quay_csrf_auth.json.csrf_token }}"
     body_format: json
     body:
       username: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
@@ -65,7 +75,7 @@
     method: PUT
     headers:
       Cookie: "{{ r_quay_signin.cookies_string }}"
-      X-CSRF-Token: "{{ r_quay_csrf.json.csrf_token }}"
+      X-CSRF-Token: "{{ r_quay_csrf_auth.json.csrf_token }}"
     body_format: json
     body:
       password: "{{ ocp4_workload_hummingbird_builds_quay_user_password }}"
