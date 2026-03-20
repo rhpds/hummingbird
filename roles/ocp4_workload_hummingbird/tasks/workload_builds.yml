@@ -16,6 +16,12 @@
     template: namespace_builds.yaml.j2
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
 
+- name: Grant namespace admin to builds users in their namespace
+  kubernetes.core.k8s:
+    state: present
+    template: rolebinding_builds_namespace_admin.yaml.j2
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
 - name: Get initial Quay CSRF token
   ansible.builtin.uri:
     url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/csrf_token"
