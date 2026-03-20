@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ ocp4_workload_hummingbird_builds_namespace_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}
+  annotations:
+    openshift.io/requester: {{ ocp4_workload_hummingbird_user_base }}{{ item }}
