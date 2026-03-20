@@ -12,6 +12,29 @@
     that: r_argocd.resources | length > 0
     msg: "Openshift Gitops / ArgoCD is not installed."
 
+- name: Set up DataVolume for the RHEL VM image
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ item }}"
+  loop:
+  - secret.yaml.j2
+  - datavolume.yaml.j2
+  - datasource.yaml.j2
+
+- name: Wait until the DataVolume has been populated
+  kubernetes.core.k8s_info:
+    api_version: cdi.kubevirt.io/v1beta1
+    kind: DataVolume
+    name: "{{ ocp4_workload_hummingbird_datavolume_name }}"
+    namespace: "{{ ocp4_workload_hummingbird_datavolume_namespace }}"
+    wait: true
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Ready
+      status: "True"
+  register: r_datavolume
+
 - name: Create RHEL VMs
   kubernetes.core.k8s:
     state: present

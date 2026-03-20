@@ -47,15 +47,3 @@ spec:
               password: {{ ocp4_workload_hummingbird_vm_password }}
               disksize: {{ ocp4_workload_hummingbird_vm_disksize }}
               instancetype: {{ ocp4_workload_hummingbird_vm_instancetype }}
-            datavolume:
-              name: {{ ocp4_workload_hummingbird_datavolume_name }}
-              namespace: {{ ocp4_workload_hummingbird_datavolume_namespace }}
-              source: {{ ocp4_workload_hummingbird_datavolume_source }}
-              storageClassName: {{ ocp4_workload_hummingbird_datavolume_storageClassName }}
-              disksize: {{ ocp4_workload_hummingbird_datavolume_disksize }}
-            datasource:
-              name: {{ ocp4_workload_hummingbird_datasource_name }}
-              namespace: {{ ocp4_workload_hummingbird_datasource_namespace }}
-              source:
-                name: {{ ocp4_workload_hummingbird_datasource_pvc_source_name }}
-                namespace: {{ ocp4_workload_hummingbird_datasource_pvc_source_namespace }}

@@ -1,0 +1,11 @@
+---
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataSource
+metadata:
+  name: {{ ocp4_workload_hummingbird_datasource_name }}
+  namespace: {{ ocp4_workload_hummingbird_datasource_namespace }}
+spec:
+  source:
+    pvc:
+      name: {{ ocp4_workload_hummingbird_datasource_pvc_source_name }}
+      namespace: {{ ocp4_workload_hummingbird_datasource_pvc_source_namespace }}
