@@ -16,52 +16,39 @@
     template: namespace_builds.yaml.j2
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
 
-- name: Get Quay CSRF token
-  ansible.builtin.uri:
-    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/csrf_token"
-    method: GET
-    status_code: 200
-  register: r_quay_csrf
-
 - name: Sign in to Quay as admin
   ansible.builtin.uri:
     url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/signin"
     method: POST
-    headers:
-      Cookie: "{{ r_quay_csrf.cookies_string }}"
-      X-CSRF-Token: "{{ r_quay_csrf.json.csrf_token }}"
-      X-Requested-With: XMLHttpRequest
     body_format: json
     body:
       username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
       password: "{{ ocp4_workload_hummingbird_builds_quay_admin_password }}"
     status_code: 200
-    return_content: true
   register: r_quay_signin
 
-- name: Debug Quay signin response
+- name: Get CSRF token for authenticated Quay session
+  ansible.builtin.uri:
+    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/csrf_token"
+    method: GET
+    headers:
+      Cookie: "{{ r_quay_signin.cookies_string }}"
+    status_code: 200
+  register: r_quay_csrf
+
+- name: Debug Quay auth
   ansible.builtin.debug:
     msg:
-      signin_status: "{{ r_quay_signin.status }}"
-      signin_body: "{{ r_quay_signin.json | default('no json') }}"
-      signin_cookies: "{{ r_quay_signin.cookies_string }}"
-      csrf_cookies: "{{ r_quay_csrf.cookies_string }}"
-
-- name: Build Quay session cookie string
-  ansible.builtin.set_fact:
-    _ocp4_workload_hummingbird_quay_cookies: >-
-      {{ r_quay_csrf.cookies_string }}; {{ r_quay_signin.cookies_string }}
-    _ocp4_workload_hummingbird_quay_csrf: >-
-      {{ r_quay_csrf.json.csrf_token }}
+      session_cookie: "{{ r_quay_signin.cookies_string }}"
+      csrf_token: "{{ r_quay_csrf.json.csrf_token }}"
 
 - name: Create Quay users
   ansible.builtin.uri:
     url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/superuser/users/"
     method: POST
     headers:
-      Cookie: "{{ _ocp4_workload_hummingbird_quay_cookies }}"
-      X-CSRF-Token: "{{ _ocp4_workload_hummingbird_quay_csrf }}"
-      X-Requested-With: XMLHttpRequest
+      Cookie: "{{ r_quay_signin.cookies_string }}"
+      X-CSRF-Token: "{{ r_quay_csrf.json.csrf_token }}"
     body_format: json
     body:
       username: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
@@ -77,9 +64,8 @@
       {{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/superuser/users/{{ ocp4_workload_hummingbird_user_base }}{{ item }}
     method: PUT
     headers:
-      Cookie: "{{ _ocp4_workload_hummingbird_quay_cookies }}"
-      X-CSRF-Token: "{{ _ocp4_workload_hummingbird_quay_csrf }}"
-      X-Requested-With: XMLHttpRequest
+      Cookie: "{{ r_quay_signin.cookies_string }}"
+      X-CSRF-Token: "{{ r_quay_csrf.json.csrf_token }}"
     body_format: json
     body:
       password: "{{ ocp4_workload_hummingbird_builds_quay_user_password }}"
