@@ -1,0 +1,110 @@
+---
+- name: Create ClusterRole for Shipwright ClusterBuildStrategies
+  kubernetes.core.k8s:
+    state: present
+    template: clusterrole_builds.yaml.j2
+
+- name: Create ClusterRoleBindings for builds users
+  kubernetes.core.k8s:
+    state: present
+    template: clusterrolebinding_builds.yaml.j2
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
+- name: Create builds namespaces
+  kubernetes.core.k8s:
+    state: present
+    template: namespace_builds.yaml.j2
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
+- name: Get Quay admin API token
+  ansible.builtin.uri:
+    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/user/login"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ ocp4_workload_hummingbird_builds_quay_admin }}"
+      password: "{{ ocp4_workload_hummingbird_builds_quay_admin_password }}"
+    status_code: 200
+  register: ocp4_workload_hummingbird_r_quay_login
+
+- name: Set Quay access token fact
+  ansible.builtin.set_fact:
+    _ocp4_workload_hummingbird_quay_token: >-
+      {{ ocp4_workload_hummingbird_r_quay_login.json.access_token }}
+
+- name: Create Quay users
+  ansible.builtin.uri:
+    url: "{{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/superuser/users/"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ _ocp4_workload_hummingbird_quay_token }}"
+    body_format: json
+    body:
+      username: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+      email: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}@example.com"
+    status_code:
+      - 200
+      - 400
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
+- name: Set Quay user passwords
+  ansible.builtin.uri:
+    url: >-
+      {{ ocp4_workload_hummingbird_builds_quay_url }}/api/v1/superuser/users/{{ ocp4_workload_hummingbird_user_base }}{{ item }}
+    method: PUT
+    headers:
+      Authorization: "Bearer {{ _ocp4_workload_hummingbird_quay_token }}"
+    body_format: json
+    body:
+      password: "{{ ocp4_workload_hummingbird_builds_quay_user_password }}"
+    status_code: 200
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
+- name: Create docker-registry secrets for Quay
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: quay-registry-credentials
+        namespace: >-
+          {{ ocp4_workload_hummingbird_builds_namespace_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}
+      type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: >-
+          {{ {'auths': {ocp4_workload_hummingbird_builds_quay_url:
+          {'username': ocp4_workload_hummingbird_user_base ~ item | string,
+          'password': ocp4_workload_hummingbird_builds_quay_user_password,
+          'auth': (ocp4_workload_hummingbird_user_base ~ item | string
+          ~ ':' ~ ocp4_workload_hummingbird_builds_quay_user_password)
+          | b64encode}}} | to_json | b64encode }}
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
+- name: Link secret to pipeline ServiceAccount
+  kubernetes.core.k8s:
+    state: present
+    merge_type: strategic-merge
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: pipeline
+        namespace: >-
+          {{ ocp4_workload_hummingbird_builds_namespace_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}
+      secrets:
+        - name: quay-registry-credentials
+      imagePullSecrets:
+        - name: quay-registry-credentials
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
+- name: Save builds user information
+  agnosticd.core.agnosticd_user_info:
+    user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+    data:
+      builds_namespace: >-
+        {{ ocp4_workload_hummingbird_builds_namespace_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}
+      quay_url: "{{ ocp4_workload_hummingbird_builds_quay_url }}"
+      quay_user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+      quay_password: "{{ ocp4_workload_hummingbird_builds_quay_user_password }}"
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
