@@ -25,6 +25,7 @@ ocp4_workload_hummingbird_vm_user: rhel
 ocp4_workload_hummingbird_vm_password: ""
 ocp4_workload_hummingbird_vm_disksize: 30Gi
 ocp4_workload_hummingbird_vm_instancetype: u1.medium
+ocp4_workload_hummingbird_vm_init_script_url: ""
 
 # Credentials for the datavolume source (S3 bucket)
 ocp4_workload_hummingbird_datavolume_s3_access_key_id: ""
