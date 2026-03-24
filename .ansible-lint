@@ -1,0 +1,12 @@
+---
+profile: production
+offline: true
+
+exclude_paths:
+- tests/
+
+skip_list:
+- galaxy[no-changelog]
+- name[template]
+- var-naming[no-role-prefix]
+- var-naming[pattern]
