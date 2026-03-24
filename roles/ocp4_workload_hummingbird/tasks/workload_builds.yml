@@ -2,8 +2,10 @@
 - name: Create user namespaces and namespace admin rolebindings
   ansible.builtin.include_tasks: build_namespace.yml
   vars:
-    _ocp4_workload_hummingbird_namespace_prefix: "{{ item }}"
+    _ocp4_workload_hummingbird_namespace_prefix: "{{ _ocp4_workload_hummingbird_ns_base_loop }}"
   loop: "{{ ocp4_workload_hummingbird_namespace_base_list }}"
+  loop_control:
+    loop_var: _ocp4_workload_hummingbird_ns_base_loop
 
 - name: Create ClusterRole for Shipwright ClusterBuildStrategies
   kubernetes.core.k8s:
