@@ -38,10 +38,18 @@
 - name: Create RHEL VMs
   kubernetes.core.k8s:
     state: present
-    template: applicationset.yaml.j2
+    template: applicationset-vms.yaml.j2
 
 - name: Set up Builds lab
   ansible.builtin.include_tasks: workload_builds.yml
+
+- name: Set up additional components
+  kubernetes.core.k8s:
+    state: present
+    resource_definition: "{{ lookup('file', item) | from_yaml }}"
+  loop:
+  - application-rhtas.yaml
+  - application-keycloak-rhtas.yaml
 
 - name: Save VM user information for each user
   agnosticd.core.agnosticd_user_info:
