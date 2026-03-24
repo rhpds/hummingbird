@@ -47,7 +47,7 @@
   agnosticd.core.agnosticd_user_info:
     user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
     data:
-      rhel_vm_name: "{{ ocp4_workload_hummingbird_vm_name }}
+      rhel_vm_name: "{{ ocp4_workload_hummingbird_vm_name }}"
       rhel_vm_user: "{{ ocp4_workload_hummingbird_vm_user }}"
       rhel_vm_password: "{{ ocp4_workload_hummingbird_vm_password }}"
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
