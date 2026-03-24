@@ -3,10 +3,7 @@
   ansible.builtin.include_tasks: build_namespace.yml
   vars:
     _ocp4_workload_hummingbird_namespace_prefix: "{{ item }}"
-  loop:
-  - hummingbird-builds
-  - hummingbird-production
-  - hummingbird-acs-lab
+  loop: "{{ ocp4_workload_hummingbird_namespace_base_list }}"
 
 - name: Create ClusterRole for Shipwright ClusterBuildStrategies
   kubernetes.core.k8s:
