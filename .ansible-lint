@@ -1,6 +1,5 @@
 ---
 profile: production
-offline: true
 
 exclude_paths:
 - tests/
@@ -10,3 +9,6 @@ skip_list:
 - name[template]
 - var-naming[no-role-prefix]
 - var-naming[pattern]
+
+mock_modules:
+- agnosticd.core.agnosticd_user_info
