@@ -1,7 +1,6 @@
 [OSEv3]
 localhost
 
-
 [OSEv3:children]
 etcd
 masters
