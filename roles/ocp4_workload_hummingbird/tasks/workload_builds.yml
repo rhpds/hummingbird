@@ -124,8 +124,6 @@
   agnosticd.core.agnosticd_user_info:
     user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
     data:
-      builds_namespace: >-
-        {{ ocp4_workload_hummingbird_builds_namespace_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}
       quay_url: "{{ ocp4_workload_hummingbird_builds_quay_url }}"
       quay_hostname: "{{ ocp4_workload_hummingbird_builds_quay_url | urlsplit('hostname') }}"
       quay_user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
