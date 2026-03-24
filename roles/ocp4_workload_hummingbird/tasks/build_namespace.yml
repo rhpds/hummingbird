@@ -1,5 +1,5 @@
 ---
-- name: Create {{ _ocp4_workload_hummingbird_namespace_prefix }} namespaces
+- name: Create namespaces for {{ _ocp4_workload_hummingbird_namespace_prefix }}
   vars:
     _ocp4_workload_hummingbird_namespace: "{{ _ocp4_workload_hummingbird_namespace_prefix }}-{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
   kubernetes.core.k8s:

@@ -5,29 +5,8 @@ exclude_paths:
 - tests/
 
 skip_list:
-- galaxy[no-changelog]
-- name[template]
 - var-naming[no-role-prefix]
-- var-naming[pattern]
-- fqcn[action-core]
-- fqcn[canonical]
-- ignore-errors
-- jinja[spacing]
-- risky-file-permissions
-- no-changed-when
-- risky-shell-pipe
-- partial-become
-- no-handler
-- package-latest
-- literal-compare
-- meta-incorrect
-- role-name
-- name[missing]
-- name[casing]
-- command-instead-of-shell
-- no-free-form
-- meta-no-tags
-- galaxy[version-incorrect]
+- galaxy[no-changelog]
 
 mock_modules:
 - agnosticd.core.agnosticd_user_info

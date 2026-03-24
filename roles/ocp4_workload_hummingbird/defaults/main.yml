@@ -23,8 +23,8 @@ ocp4_workload_hummingbird_role: admin
 # Settings for the RHEL VMs
 ocp4_workload_hummingbird_vm_name: rhel
 ocp4_workload_hummingbird_vm_namespace_base: rhel
-ocp4_workload_hummingbird_vm_datasourcename: hummingbird
-ocp4_workload_hummingbird_vm_datasourcenamespace: openshift-virtualization-os-images
+ocp4_workload_hummingbird_vm_datasource_name: hummingbird
+ocp4_workload_hummingbird_vm_datasource_namespace: openshift-virtualization-os-images
 ocp4_workload_hummingbird_vm_user: rhel
 # Set password via config
 ocp4_workload_hummingbird_vm_password: ""
@@ -40,7 +40,7 @@ ocp4_workload_hummingbird_datavolume_s3_secret_access_key: ""
 ocp4_workload_hummingbird_datavolume_name: hummingbird
 ocp4_workload_hummingbird_datavolume_namespace: openshift-virtualization-os-images
 ocp4_workload_hummingbird_datavolume_source: http://url_to_qcow2_image.qcow2
-ocp4_workload_hummingbird_datavolume_storageClassName: ocs-external-storagecluster-ceph-rbd-immediate
+ocp4_workload_hummingbird_datavolume_storage_class_name: ocs-external-storagecluster-ceph-rbd-immediate
 ocp4_workload_hummingbird_datavolume_disksize: 30Gi
 
 # Settings for the DataSource

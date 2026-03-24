@@ -15,7 +15,7 @@ spec:
       url: {{ ocp4_workload_hummingbird_datavolume_source }}
 {% endif %}  
   storage:
-    storageClassName: {{ ocp4_workload_hummingbird_datavolume_storageClassName }}
+    storageClassName: {{ ocp4_workload_hummingbird_datavolume_storage_class_name }}
     resources:
       requests:
         storage: {{ ocp4_workload_hummingbird_datavolume_disksize }}
