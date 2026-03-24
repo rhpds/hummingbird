@@ -1,0 +1,16 @@
+---
+- name: Create {{ _ocp4_workload_hummingbird_namespace_prefix }} namespaces
+  vars:
+    _ocp4_workload_hummingbird_namespace: "{{ _ocp4_workload_hummingbird_namespace_prefix }}-{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+  kubernetes.core.k8s:
+    state: present
+    template: namespace.yaml.j2
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
+
+- name: Grant namespace admin for {{ _ocp4_workload_hummingbird_namespace_prefix }}
+  vars:
+    _ocp4_workload_hummingbird_namespace: "{{ _ocp4_workload_hummingbird_namespace_prefix }}-{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+  kubernetes.core.k8s:
+    state: present
+    template: rolebinding_namespace_admin.yaml.j2
+  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"

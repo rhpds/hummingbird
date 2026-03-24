@@ -49,5 +49,5 @@
       rhel_vm_password: "{{ ocp4_workload_hummingbird_vm_password }}"
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
 
-- name: Set up Builds capabilities
+- name: Set up Builds lab
   ansible.builtin.include_tasks: workload_builds.yml

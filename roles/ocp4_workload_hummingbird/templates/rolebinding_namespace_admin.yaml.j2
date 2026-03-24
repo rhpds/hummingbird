@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: hummingbird-builds-namespace-admin
-  namespace: {{ ocp4_workload_hummingbird_builds_namespace_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}
+  namespace: {{ _ocp4_workload_hummingbird_namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

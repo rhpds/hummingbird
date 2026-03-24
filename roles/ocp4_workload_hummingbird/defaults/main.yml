@@ -17,7 +17,7 @@ ocp4_workload_hummingbird_user_base: user
 ocp4_workload_hummingbird_role: admin
 
 # Settings for the RHEL VMs
-ocp4_workload_hummingbird_vm_name_base: rhel-
+ocp4_workload_hummingbird_vm_name: rhel
 ocp4_workload_hummingbird_vm_datasourcename: hummingbird
 ocp4_workload_hummingbird_vm_datasourcenamespace: openshift-virtualization-os-images
 ocp4_workload_hummingbird_vm_user: rhel

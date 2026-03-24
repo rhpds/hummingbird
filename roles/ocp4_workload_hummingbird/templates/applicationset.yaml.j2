@@ -40,7 +40,7 @@ spec:
               user: "{% raw %}{{ user }}{% endraw %}"
               role: {{ ocp4_workload_hummingbird_role }}
             vm:
-              name: "{{ ocp4_workload_hummingbird_vm_name_base }}{% raw %}{{ user }}{% endraw %}"
+              name: {{ ocp4_workload_hummingbird_vm_name }}
               datasourcename: {{ ocp4_workload_hummingbird_vm_datasourcename }}
               datasourcenamespace: {{ ocp4_workload_hummingbird_vm_datasourcenamespace }}
               username: {{ ocp4_workload_hummingbird_vm_user }}
