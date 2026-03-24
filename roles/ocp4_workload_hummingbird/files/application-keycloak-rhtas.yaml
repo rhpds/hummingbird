@@ -1,0 +1,17 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak-rhtas
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: ""
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: bootstrap/07-keycloak-rhtas
+    repoURL: https://github.com/rhpds/hummingbird-showroom.git
+    targetRevision: main
+  syncPolicy:
+    automated: {}

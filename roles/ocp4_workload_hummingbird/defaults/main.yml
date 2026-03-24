@@ -9,7 +9,11 @@ ocp4_workload_hummingbird_repo_path: hummingbird
 ocp4_workload_hummingbird_num_users: 1
 
 # Namespace base (The user number will be appended to this base)
-ocp4_workload_hummingbird_namespace_base: rhel-
+ocp4_workload_hummingbird_namespace_base_list:
+- hummingbird-builds
+- hummingbird-production
+- hummingbird-acs-lab
+
 # Base for multi user setup
 ocp4_workload_hummingbird_user_base: user
 
@@ -17,7 +21,8 @@ ocp4_workload_hummingbird_user_base: user
 ocp4_workload_hummingbird_role: admin
 
 # Settings for the RHEL VMs
-ocp4_workload_hummingbird_vm_name_base: rhel-
+ocp4_workload_hummingbird_vm_name: rhel
+ocp4_workload_hummingbird_vm_namespace_base: rhel
 ocp4_workload_hummingbird_vm_datasourcename: hummingbird
 ocp4_workload_hummingbird_vm_datasourcenamespace: openshift-virtualization-os-images
 ocp4_workload_hummingbird_vm_user: rhel

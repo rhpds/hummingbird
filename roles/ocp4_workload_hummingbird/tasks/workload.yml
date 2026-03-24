@@ -38,16 +38,24 @@
 - name: Create RHEL VMs
   kubernetes.core.k8s:
     state: present
-    template: applicationset.yaml.j2
+    template: applicationset-vms.yaml.j2
+
+- name: Set up Builds lab
+  ansible.builtin.include_tasks: workload_builds.yml
+
+- name: Set up additional components
+  kubernetes.core.k8s:
+    state: present
+    resource_definition: "{{ lookup('file', item) | from_yaml }}"
+  loop:
+  - application-rhtas.yaml
+  - application-keycloak-rhtas.yaml
 
 - name: Save VM user information for each user
   agnosticd.core.agnosticd_user_info:
     user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
     data:
-      rhel_vm_name: "{{ ocp4_workload_hummingbird_vm_name_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
+      rhel_vm_name: "{{ ocp4_workload_hummingbird_vm_name }}"
       rhel_vm_user: "{{ ocp4_workload_hummingbird_vm_user }}"
       rhel_vm_password: "{{ ocp4_workload_hummingbird_vm_password }}"
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
-
-- name: Set up Builds capabilities
-  ansible.builtin.include_tasks: workload_builds.yml

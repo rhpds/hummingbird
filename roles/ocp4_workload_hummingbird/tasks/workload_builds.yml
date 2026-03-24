@@ -1,4 +1,12 @@
 ---
+- name: Create user namespaces and namespace admin rolebindings
+  ansible.builtin.include_tasks: build_namespace.yml
+  vars:
+    _ocp4_workload_hummingbird_namespace_prefix: "{{ _ocp4_workload_hummingbird_ns_base_loop }}"
+  loop: "{{ ocp4_workload_hummingbird_namespace_base_list }}"
+  loop_control:
+    loop_var: _ocp4_workload_hummingbird_ns_base_loop
+
 - name: Create ClusterRole for Shipwright ClusterBuildStrategies
   kubernetes.core.k8s:
     state: present
@@ -8,18 +16,6 @@
   kubernetes.core.k8s:
     state: present
     template: clusterrolebinding_builds.yaml.j2
-  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
-
-- name: Create builds namespaces
-  kubernetes.core.k8s:
-    state: present
-    template: namespace_builds.yaml.j2
-  loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
-
-- name: Grant namespace admin to builds users in their namespace
-  kubernetes.core.k8s:
-    state: present
-    template: rolebinding_builds_namespace_admin.yaml.j2
   loop: "{{ range(1, 1 + ocp4_workload_hummingbird_num_users | int) | list }}"
 
 - name: Get initial Quay CSRF token
@@ -130,8 +126,6 @@
   agnosticd.core.agnosticd_user_info:
     user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
     data:
-      builds_namespace: >-
-        {{ ocp4_workload_hummingbird_builds_namespace_base }}{{ ocp4_workload_hummingbird_user_base }}{{ item }}
       quay_url: "{{ ocp4_workload_hummingbird_builds_quay_url }}"
       quay_hostname: "{{ ocp4_workload_hummingbird_builds_quay_url | urlsplit('hostname') }}"
       quay_user: "{{ ocp4_workload_hummingbird_user_base }}{{ item }}"
