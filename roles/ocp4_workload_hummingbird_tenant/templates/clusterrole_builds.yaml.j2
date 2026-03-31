@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hummingbird-builds-clusterbuildstrategies
+rules:
+- apiGroups:
+  - shipwright.io
+  resources:
+  - clusterbuildstrategies
+  verbs:
+  - get
+  - list
+  - watch

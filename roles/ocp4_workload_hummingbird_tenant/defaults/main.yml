@@ -1,0 +1,36 @@
+---
+# Helm Chart to deploy
+ocp4_workload_hummingbird_tenant_repo: https://github.com/redhat-gpte-devopsautomation/agnosticd_workload_helm_charts.git
+# Tag to deploy
+ocp4_workload_hummingbird_tenant_repo_tag: main
+ocp4_workload_hummingbird_tenant_repo_path: hummingbird
+
+ocp4_workload_hummingbird_tenant_user: "user1"
+
+# Namespace base (The user will be appended to this base)
+ocp4_workload_hummingbird_tenant_namespace_base_list:
+- hummingbird-builds
+- hummingbird-production
+- hummingbird-acs-lab
+
+# Role to grant users for their namespace
+ocp4_workload_hummingbird_tenant_role: admin
+
+# Settings for the RHEL VMs
+ocp4_workload_hummingbird_tenant_vm_name: rhel
+ocp4_workload_hummingbird_tenant_vm_namespace_base: rhel
+ocp4_workload_hummingbird_tenant_vm_datasource_name: hummingbird
+ocp4_workload_hummingbird_tenant_vm_datasource_namespace: openshift-virtualization-os-images
+ocp4_workload_hummingbird_tenant_vm_user: rhel
+# Set password via config
+ocp4_workload_hummingbird_tenant_vm_password: ""
+ocp4_workload_hummingbird_tenant_vm_disksize: 30Gi
+ocp4_workload_hummingbird_tenant_vm_instancetype: u1.medium
+ocp4_workload_hummingbird_tenant_vm_init_script_url: ""
+
+# Settings for the Builds section
+ocp4_workload_hummingbird_tenant_builds_namespace_base: hummingbird-builds-
+ocp4_workload_hummingbird_tenant_builds_quay_url: https://quay-registry.example.com
+ocp4_workload_hummingbird_tenant_builds_quay_admin: quayadmin
+ocp4_workload_hummingbird_tenant_builds_quay_admin_password: ""
+ocp4_workload_hummingbird_tenant_builds_quay_user_password: ""

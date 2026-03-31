@@ -1,0 +1,44 @@
+---
+- name: Check Openshift Gitops / ArgoCD installation
+  kubernetes.core.k8s_info:
+    api_version: argoproj.io/v1alpha1
+    kind: ArgoCD
+    name: openshift-gitops
+    namespace: openshift-gitops
+  register: r_argocd
+
+- name: Assert that GitOps is installed
+  ansible.builtin.assert:
+    that: r_argocd.resources | length > 0
+    msg: "Openshift Gitops / ArgoCD is not installed."
+
+- name: Set up DataVolume for the RHEL VM image
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ item }}"
+  loop:
+  - secret.yaml.j2
+  - datavolume.yaml.j2
+  - datasource.yaml.j2
+
+- name: Wait until the DataVolume has been populated
+  kubernetes.core.k8s_info:
+    api_version: cdi.kubevirt.io/v1beta1
+    kind: DataVolume
+    name: "{{ ocp4_workload_hummingbird_infra_datavolume_name }}"
+    namespace: "{{ ocp4_workload_hummingbird_infra_datavolume_namespace }}"
+    wait: true
+    wait_sleep: 10
+    wait_timeout: 600
+    wait_condition:
+      type: Ready
+      status: "True"
+  register: r_datavolume
+
+- name: Set up additional components
+  kubernetes.core.k8s:
+    state: present
+    resource_definition: "{{ lookup('file', item) | from_yaml }}"
+  loop:
+  - application-rhtas.yaml
+  - application-keycloak-rhtas.yaml

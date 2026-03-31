@@ -1,0 +1,17 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak-rhtas
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: ""
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: {{ ocp4_workload_hummingbird_infra_keycloak_repo }}
+    targetRevision: {{ ocp4_workload_hummingbird_infra_keycloak_repo_ref }}
+    path: {{ ocp4_workload_hummingbird_infra_keycloak_repo_path }}
+  syncPolicy:
+    automated: {}
