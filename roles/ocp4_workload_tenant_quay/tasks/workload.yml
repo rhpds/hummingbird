@@ -1,61 +1,98 @@
 ---
-- name: Check Openshift Gitops / ArgoCD installation
+- name: Get Quay registry endpoint
   kubernetes.core.k8s_info:
-    api_version: argoproj.io/v1alpha1
-    kind: ArgoCD
-    name: openshift-gitops
-    namespace: openshift-gitops
-  register: r_argocd
+    api_version: quay.redhat.com/v1
+    kind: QuayRegistry
+    name: "{{ ocp4_workload_tenant_quay_instance }}"
+    namespace: "{{ ocp4_workload_tenant_quay_namespace }}"
+  register: r_quay_registry
+  failed_when: r_quay_registry.resources | length == 0
 
-- name: Assert that GitOps is installed
-  ansible.builtin.assert:
-    that: r_argocd.resources | length > 0
-    msg: "Openshift Gitops / ArgoCD is not installed."
+- name: Set Quay API URL
+  ansible.builtin.set_fact:
+    _ocp4_workload_tenant_quay_api_url: >-
+      {{ r_quay_registry.resources[0].status.registryEndpoint }}
 
-- name: Set up DataVolume for the RHEL VM image
-  kubernetes.core.k8s:
-    state: present
-    template: "{{ item }}"
-  loop:
-  - secret.yaml.j2
-  - datavolume.yaml.j2
-  - datasource.yaml.j2
-
-- name: Wait until the DataVolume has been populated
+- name: Get Quay admin token from secret
   kubernetes.core.k8s_info:
-    api_version: cdi.kubevirt.io/v1beta1
-    kind: DataVolume
-    name: "{{ ocp4_workload_tenant_quaydatavolume_name }}"
-    namespace: "{{ ocp4_workload_tenant_quaydatavolume_namespace }}"
-    wait: true
-    wait_sleep: 10
-    wait_timeout: 600
-    wait_condition:
-      type: Ready
-      status: "True"
-  register: r_datavolume
+    api_version: v1
+    kind: Secret
+    name: quay-admin-token
+    namespace: "{{ ocp4_workload_tenant_quay_namespace }}"
+  register: r_quay_token_secret
+  failed_when: r_quay_token_secret.resources | length == 0
 
-- name: Create RHEL VMs
+- name: Set Quay admin token
+  ansible.builtin.set_fact:
+    _ocp4_workload_tenant_quay_token: >-
+      {{ r_quay_token_secret.resources[0].data.token | b64decode }}
+
+- name: Create Quay user
+  ansible.builtin.uri:
+    url: "{{ _ocp4_workload_tenant_quay_api_url }}/api/v1/superuser/users/"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ _ocp4_workload_tenant_quay_token }}"
+    body_format: json
+    body:
+      username: "{{ ocp4_workload_tenant_quay_user }}"
+      email: "{{ ocp4_workload_tenant_quay_user }}@example.com"
+    validate_certs: false
+    status_code:
+    - 200
+    - 400
+
+- name: Set Quay user password
+  ansible.builtin.uri:
+    url: >-
+      {{ _ocp4_workload_tenant_quay_api_url }}/api/v1/superuser/users/{{ ocp4_workload_tenant_quay_user }}
+    method: PUT
+    headers:
+      Authorization: "Bearer {{ _ocp4_workload_tenant_quay_token }}"
+    body_format: json
+    body:
+      password: "{{ ocp4_workload_tenant_quay_user_password }}"
+    validate_certs: false
+    status_code: 200
+
+- name: Create docker-registry secrets for Quay
   kubernetes.core.k8s:
     state: present
-    template: applicationset-vms.yaml.j2
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: registry-credentials
+        namespace: "{{ ocp4_workload_tenant_quay_pipeline_namespace}}"
+      type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: >-
+          {{ {'auths': {_ocp4_workload_tenant_quay_api_url:
+          {'username': ocp4_workload_tenant_quay_user,
+          'password': ocp4_workload_tenant_quay_user_password,
+          'auth': (ocp4_workload_tenant_quay_user
+          ~ ':' ~ ocp4_workload_tenant_quay_user_password)
+          | b64encode}}} | to_json | b64encode }}
 
-- name: Set up Builds lab
-  ansible.builtin.include_tasks: workload_builds.yml
-
-- name: Set up additional components
+- name: Link secret to pipeline ServiceAccount
   kubernetes.core.k8s:
     state: present
-    resource_definition: "{{ lookup('file', item) | from_yaml }}"
-  loop:
-  - application-rhtas.yaml
-  - application-keycloak-rhtas.yaml
+    merge_type: strategic-merge
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: pipeline
+        namespace: "{{ ocp4_workload_tenant_quay_pipeline_namespace }}"
+      secrets:
+      - name: registry-credentials
+      imagePullSecrets:
+      - name: registry-credentials
 
-- name: Save VM user information for each user
+- name: Save builds user information
   agnosticd.core.agnosticd_user_info:
-    user: "{{ ocp4_workload_tenant_quayuser_base }}{{ item }}"
     data:
-      rhel_vm_name: "{{ ocp4_workload_tenant_quayvm_name }}"
-      rhel_vm_user: "{{ ocp4_workload_tenant_quayvm_user }}"
-      rhel_vm_password: "{{ ocp4_workload_tenant_quayvm_password }}"
-  loop: "{{ range(1, 1 + ocp4_workload_tenant_quaynum_users | int) | list }}"
+      quay_url: "{{ _ocp4_workload_tenant_quay_api_url }}"
+      quay_hostname: "{{ _ocp4_workload_tenant_quay_api_url | urlsplit('hostname') }}"
+      quay_user: "{{ ocp4_workload_tenant_quay_user }}"
+      quay_password: "{{ ocp4_workload_tenant_quay_user_password }}"
