@@ -5,6 +5,8 @@
     template: "{{ item }}"
   loop:
   - vm.yaml.j2
+  - service-vm.yaml.j2
+  - route-vm.yaml.j2
   - clusterrolebinding-builds.yaml.j2
 
 - name: Save VM user information

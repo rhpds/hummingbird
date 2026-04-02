@@ -4,5 +4,7 @@
     state: absent
     template: "{{ item }}"
   loop:
+  - route-vm.yaml.j2
+  - service-vm.yaml.j2
   - vm.yaml.j2
   - clusterrolebinding-builds.yaml.j2
