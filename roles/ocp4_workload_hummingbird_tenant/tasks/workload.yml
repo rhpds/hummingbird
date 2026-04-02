@@ -1,0 +1,15 @@
+---
+- name: Create resources for the lab
+  kubernetes.core.k8s:
+    state: present
+    template: "{{ item }}"
+  loop:
+  - vm.yaml.j2
+  - clusterrolebinding-builds.yaml.j2
+
+- name: Save VM user information
+  agnosticd.core.agnosticd_user_info:
+    data:
+      rhel_vm_name: "{{ ocp4_workload_hummingbird_tenant_vm_name }}"
+      rhel_vm_user: "{{ ocp4_workload_hummingbird_tenant_vm_user }}"
+      rhel_vm_password: "{{ ocp4_workload_hummingbird_tenant_vm_password }}"

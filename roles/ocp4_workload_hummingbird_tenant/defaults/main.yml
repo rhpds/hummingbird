@@ -1,0 +1,21 @@
+---
+ocp4_workload_hummingbird_tenant_user: "{{ ocp4_workload_username }}"
+
+# Settings for the RHEL VMs
+ocp4_workload_hummingbird_tenant_vm_name: rhel
+ocp4_workload_hummingbird_tenant_vm_namespace: "{{ ocp4_workload_username }}-rhel"
+ocp4_workload_hummingbird_tenant_vm_datasource_name: hummingbird
+ocp4_workload_hummingbird_tenant_vm_datasource_namespace: openshift-virtualization-os-images
+ocp4_workload_hummingbird_tenant_vm_user: rhel
+# Set password via config
+ocp4_workload_hummingbird_tenant_vm_password: ""
+ocp4_workload_hummingbird_tenant_vm_ssh_pwauth: true
+ocp4_workload_hummingbird_tenant_vm_disksize: 30Gi
+ocp4_workload_hummingbird_tenant_vm_instancetype: u1.medium
+# Set via config. No script run if empty
+ocp4_workload_hummingbird_tenant_vm_init_script_url: ""
+
+# A satellite server to register the VM with
+ocp4_workload_hummingbird_tenant_vm_satellite_url: ""
+ocp4_workload_hummingbird_tenant_vm_satellite_org: ""
+ocp4_workload_hummingbird_tenant_vm_satellite_activation_key: ""

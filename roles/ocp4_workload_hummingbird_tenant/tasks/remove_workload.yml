@@ -1,0 +1,8 @@
+---
+- name: Remove resources for the lab
+  kubernetes.core.k8s:
+    state: absent
+    template: "{{ item }}"
+  loop:
+  - vm.yaml.j2
+  - clusterrolebinding-builds.yaml.j2

@@ -1,0 +1,5 @@
+= ocp4_workload_hummingbird_tenant - Deploy Resources for the hummingbird lab
+
+== The defaults variable file
+
+* This file ./defaults/main.yml contains all the variables you need to define to control the deployment of your workload.
