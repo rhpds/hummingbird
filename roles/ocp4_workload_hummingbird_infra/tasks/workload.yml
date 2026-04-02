@@ -42,3 +42,4 @@
   loop:
   - application-rhtas.yaml.j2
   - application-keycloak-rhtas.yaml.j2
+  - clusterrole-builds.yaml.j2
