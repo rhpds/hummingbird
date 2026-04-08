@@ -4,6 +4,8 @@ kind: VirtualMachine
 metadata:
   name: {{ ocp4_workload_hummingbird_tenant_vm_name }}
   namespace: {{ ocp4_workload_hummingbird_tenant_vm_namespace }}
+  labels:
+    app: {{ ocp4_workload_hummingbird_tenant_vm_name }}
 spec:
   dataVolumeTemplates:
   - metadata:
@@ -17,30 +19,48 @@ spec:
         resources:
           requests:
             storage: {{ ocp4_workload_hummingbird_tenant_vm_disksize }}
-  instancetype:
-    kind: virtualmachineclusterinstancetype
-    name: {{ ocp4_workload_hummingbird_tenant_vm_instancetype }}
-  preference:
-    kind: virtualmachineclusterpreference
-    name: rhel.10
   runStrategy: Always
   template:
     metadata:
       labels:
         network.kubevirt.io/headlessService: headless
+        kubevirt.io/domain: {{ ocp4_workload_hummingbird_tenant_vm_name }}
     spec:
       architecture: amd64
       domain:
+        cpu:
+          cores: {{ ocp4_workload_hummingbird_tenant_vm_cpu_cores | int }}
+          sockets: {{ ocp4_workload_hummingbird_tenant_vm_cpu_sockets | int }}
+          threads: {{ ocp4_workload_hummingbird_tenant_vm_cpu_threads | int }}
+        memory:
+          guest: {{ ocp4_workload_hummingbird_tenant_vm_memory_guest }}
         devices:
+          autoattachVSOCK: true
           disks:
-          - bootOrder: 1
-            name: rootdisk
-          - disk:
+          - name: rootdisk
+            bootOrder: 1
+          - name: cloudinitdisk
+            disk:
               bus: virtio
             name: cloudinitdisk
+          interfaces:
+            - masquerade: {}
+              model: virtio
+              name: default
+          rng: {}
+        features:
+          acpi: {}
+          smm:
+            enabled: true
+        firmware:
+          bootloader:
+            efi: {}
         machine:
           type: pc-q35-rhel9.6.0
         resources: {}
+      networks:
+        - name: default
+          pod: {}
       subdomain: headless
       volumes:
       - name: rootdisk
