@@ -86,7 +86,7 @@ spec:
               - rpm -Uvh /tmp/katello-ca-consumer-latest.noarch.rpm
               - |
                 subscription-manager register \
-                  --activationkey="{{ ocp4_workload_hummingbird_tenant_vm_satellite_activation_key | trim }}" \
+                  --activationkey="{{ ocp4_workload_hummingbird_tenant_vm_satellite_activationkey | trim }}" \
                   --org="{{ ocp4_workload_hummingbird_tenant_vm_satellite_org | trim }}" \
                   --force
 {% endif %}
