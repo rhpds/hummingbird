@@ -12,9 +12,9 @@ ocp4_workload_hummingbird_tenant_vm_password: ""
 ocp4_workload_hummingbird_tenant_vm_ssh_pwauth: true
 ocp4_workload_hummingbird_tenant_vm_disksize: 30Gi
 ocp4_workload_hummingbird_tenant_vm_cpu_cores: 1
-ocp4_workload_hummingbird_tenant_vm_cpu_sockets: 1
-ocp4_workload_hummingbird_tenant_vm_cpu_threads: 1
-ocp4_workload_hummingbird_tenant_vm_memory_guest: 2Gi
+ocp4_workload_hummingbird_tenant_vm_cpu_sockets: 4
+ocp4_workload_hummingbird_tenant_vm_cpu_threads: 4
+ocp4_workload_hummingbird_tenant_vm_memory_guest: 8Gi
 # Set via config. No script run if empty
 ocp4_workload_hummingbird_tenant_vm_init_script_url: ""
 
