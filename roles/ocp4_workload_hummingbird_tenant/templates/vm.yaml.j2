@@ -87,6 +87,7 @@ spec:
                 subscription-manager register \
                   --activationkey="{{ ocp4_workload_hummingbird_tenant_vm_satellite_activationkey | trim }}" \
                   --org="{{ ocp4_workload_hummingbird_tenant_vm_satellite_org | trim }}" \
+                  --name="rhel-{{ guid }}" \
                   --force
 {% endif %}
 {% if ocp4_workload_hummingbird_tenant_vm_init_script_url | trim | length > 0 %}
