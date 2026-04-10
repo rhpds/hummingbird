@@ -80,6 +80,12 @@ spec:
               expire: false
             ssh_pwauth: true
             runcmd:
+{% if _ocp4_workload_hummingbird_tenant_quay_url | default('undefined') | trim != 'undefined' %}
+              - echo "export QUAY_URL={{ _ocp4_workload_hummingbird_tenant_quay_url | trim }}" >> /home/{{ ocp4_workload_hummingbird_tenant_vm_user | trim }}/.bashrc
+              - echo "export QUAY_HOSTNAME={{ _ocp4_workload_hummingbird_tenant_quay_hostname | trim }}" >> /home/{{ ocp4_workload_hummingbird_tenant_vm_user | trim }}/.bashrc
+              - echo "export QUAY_USER={{ _ocp4_workload_hummingbird_tenant_quay_user | trim }}" >> /home/{{ ocp4_workload_hummingbird_tenant_vm_user | trim }}/.bashrc
+              - echo "export QUAY_PASSWORD={{ _ocp4_workload_hummingbird_tenant_quay_password | trim }}" >> /home/{{ ocp4_workload_hummingbird_tenant_vm_user | trim }}/.bashrc
+{% endif %}
 {% if ocp4_workload_hummingbird_tenant_vm_satellite_url | trim | length > 0 %}
               - curl -k -o /tmp/katello-ca-consumer-latest.noarch.rpm https://{{ ocp4_workload_hummingbird_tenant_vm_satellite_url | trim }}/pub/katello-ca-consumer-latest.noarch.rpm
               - rpm -Uvh /tmp/katello-ca-consumer-latest.noarch.rpm

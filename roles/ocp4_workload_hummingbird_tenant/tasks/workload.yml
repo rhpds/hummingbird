@@ -1,4 +1,11 @@
 ---
+- name: Get Quay credentials from user_info
+  ansible.builtin.set_fact:
+    _ocp4_workload_hummingbird_tenant_quay_url: "{{ lookup('agnosticd_user_data', 'quay_url', user=ocp4_workload_hummingbird_tenant_vm_user) | default('undefined') }}"
+    _ocp4_workload_hummingbird_tenant_quay_hostname: "{{ lookup('agnosticd_user_data', 'quay_hostname', user=ocp4_workload_hummingbird_tenant_vm_user) | default('undefined') }}"
+    _ocp4_workload_hummingbird_tenant_quay_user: "{{ lookup('agnosticd_user_data', 'quay_user', user=ocp4_workload_hummingbird_tenant_vm_user) | default('undefined') }}"
+    _ocp4_workload_hummingbird_tenant_quay_password: "{{ lookup('agnosticd_user_data', 'quay_password', user=ocp4_workload_hummingbird_tenant_vm_user) | default('undefined') }}"
+
 - name: Create resources for the lab
   kubernetes.core.k8s:
     state: present
