@@ -22,3 +22,26 @@
       rhel_vm_name: "{{ ocp4_workload_hummingbird_tenant_vm_name }}"
       rhel_vm_user: "{{ ocp4_workload_hummingbird_tenant_vm_user }}"
       rhel_vm_password: "{{ ocp4_workload_hummingbird_tenant_vm_password }}"
+
+- name: Get RHACS Route
+  kubernetes.core.k8s_info:
+    api_version: route.openshift.io/v1
+    kind: Route
+    name: central
+    namespace: stackrox
+  register: r_rhacs_route
+
+- name: Get RHACS Secret
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Secret
+    name: central-htpasswd
+    namespace: stackrox
+  register: r_rhacs_secret
+
+- name: Save RHACS user information
+  agnosticd.core.agnosticd_user_info:
+    data:
+      acs_route: "{{ r_rhacs_route.resources[0].spec.host }}"
+      acs_username: "admin"
+      acs_password: "{{ r_rhacs_secret.resources[0].data.password | b64decode }}"
