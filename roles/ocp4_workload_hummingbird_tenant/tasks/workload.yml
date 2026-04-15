@@ -42,6 +42,6 @@
 - name: Save RHACS user information
   agnosticd.core.agnosticd_user_info:
     data:
-      acs_route: "{{ r_rhacs_route.resources[0].spec.host }}"
+      acs_hostname: "{{ r_rhacs_route.resources[0].spec.host }}"
       acs_username: "admin"
       acs_password: "{{ r_rhacs_secret.resources[0].data.password | b64decode }}"
