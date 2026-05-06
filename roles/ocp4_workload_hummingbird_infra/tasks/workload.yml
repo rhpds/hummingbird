@@ -12,6 +12,19 @@
     that: r_argocd.resources | length > 0
     msg: "Openshift Gitops / ArgoCD is not installed."
 
+- name: Set up AWS prerequisites for DataVolume import
+  when: ocp4_workload_hummingbird_infra_platform == "aws"
+  block:
+  - name: Create Immediate-binding StorageClass for AWS EBS
+    kubernetes.core.k8s:
+      state: present
+      template: storageclass.yaml.j2
+
+  - name: Register CDI VolumePopulator
+    kubernetes.core.k8s:
+      state: present
+      template: volumepopulator.yaml.j2
+
 - name: Set up DataVolume for the RHEL VM image
   kubernetes.core.k8s:
     state: present

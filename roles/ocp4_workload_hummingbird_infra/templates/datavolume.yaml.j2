@@ -16,6 +16,9 @@ spec:
 {% endif %}  
   storage:
     storageClassName: {{ ocp4_workload_hummingbird_infra_datavolume_storage_class_name }}
+{% if ocp4_workload_hummingbird_infra_datavolume_volume_mode | default("") | length > 0 %}
+    volumeMode: {{ ocp4_workload_hummingbird_infra_datavolume_volume_mode }}
+{% endif %}
     resources:
       requests:
         storage: {{ ocp4_workload_hummingbird_infra_datavolume_disksize }}
