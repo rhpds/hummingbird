@@ -15,6 +15,10 @@ spec:
       url: {{ ocp4_workload_hummingbird_infra_datavolume_source }}
 {% endif %}  
   storage:
+{% if ocp4_workload_hummingbird_infra_platform | default("cnv") | length > 0 and ocp4_workload_hummingbird_infra_platform == "aws" %}
+    accessModes:
+    - ReadWriteOnce
+{% endif %}
     storageClassName: {{ ocp4_workload_hummingbird_infra_datavolume_storage_class_name }}
 {% if ocp4_workload_hummingbird_infra_datavolume_volume_mode | default("") | length > 0 %}
     volumeMode: {{ ocp4_workload_hummingbird_infra_datavolume_volume_mode }}
