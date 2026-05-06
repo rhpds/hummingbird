@@ -1,4 +1,7 @@
 ---
+# Platform: "cnv" (bare-metal/OCS) or "aws" (EBS)
+ocp4_workload_hummingbird_infra_platform: cnv
+
 # Credentials for the datavolume source (S3 bucket)
 ocp4_workload_hummingbird_infra_datavolume_s3_access_key_id: ""
 ocp4_workload_hummingbird_infra_datavolume_s3_secret_access_key: ""
@@ -9,6 +12,7 @@ ocp4_workload_hummingbird_infra_datavolume_namespace: openshift-virtualization-o
 ocp4_workload_hummingbird_infra_datavolume_source: http://url_to_qcow2_image.qcow2
 ocp4_workload_hummingbird_infra_datavolume_storage_class_name: ocs-external-storagecluster-ceph-rbd-immediate
 ocp4_workload_hummingbird_infra_datavolume_disksize: 30Gi
+ocp4_workload_hummingbird_infra_datavolume_volume_mode: ""
 
 # Settings for the DataSource
 ocp4_workload_hummingbird_infra_datasource_name: hummingbird
