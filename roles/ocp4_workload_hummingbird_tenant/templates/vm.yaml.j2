@@ -16,6 +16,9 @@ spec:
         name: {{ ocp4_workload_hummingbird_tenant_vm_datasource_name }}
         namespace: {{ ocp4_workload_hummingbird_tenant_vm_datasource_namespace }}
       storage:
+{% if ocp4_workload_hummingbird_tenant_vm_storage_class_name | default("") | length > 0 %}
+        storageClassName: {{ ocp4_workload_hummingbird_tenant_vm_storage_class_name }}
+{% endif %}
         resources:
           requests:
             storage: {{ ocp4_workload_hummingbird_tenant_vm_disksize }}

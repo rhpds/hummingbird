@@ -11,6 +11,8 @@ ocp4_workload_hummingbird_tenant_vm_user: rhel
 ocp4_workload_hummingbird_tenant_vm_password: ""
 ocp4_workload_hummingbird_tenant_vm_ssh_pwauth: true
 ocp4_workload_hummingbird_tenant_vm_disksize: 30Gi
+# Set to empty string for CNV, set to "gp3-csi-immediate" for AWS
+ocp4_workload_hummingbird_tenant_vm_storage_class_name: ""
 ocp4_workload_hummingbird_tenant_vm_cpu_cores: 1
 ocp4_workload_hummingbird_tenant_vm_cpu_sockets: 4
 ocp4_workload_hummingbird_tenant_vm_cpu_threads: 4
